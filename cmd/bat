@@ -8,3 +8,9 @@ sc query servicesname
 net start
 ###wait
 ping 127.0.0.1 -n 1 > null
+###delete folder
+rd /s /q folder
+###delete file
+del /f /s /q filename
+if you set filename to a folder, it will delete all files under folder.
+if you set filename to a real filename, xxxx.txt, it will delete this file.
