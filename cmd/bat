@@ -6,3 +6,5 @@ for /f "delims=, tokens=1"%%i in ('command') do ..... "delims=， tokens=1" mean
 ###find service status in windows
 sc query servicesname
 net start
+###wait
+ping 127.0.0.1 -n 1 > null
