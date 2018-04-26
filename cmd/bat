@@ -4,5 +4,5 @@ for /f %%i in ('command') do .....
 for /f "delims="%%i in ('command') do ..... "delims=" means do not spilit string
 for /f "delims=, tokens=1"%%i in ('command') do ..... "delims=， tokens=1" means spilit string with "," and chose the first column 
 ###find service status in windows
-src query servicesname
+sc query servicesname
 net start
