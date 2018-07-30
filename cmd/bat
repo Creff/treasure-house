@@ -1,3 +1,4 @@
+
 ###for demo
 for /f %%i in (text.txt) do ....
 for /f %%i in ('command') do .....
@@ -6,6 +7,9 @@ for /f "delims=, tokens=1"%%i in ('command') do ..... "delims=， tokens=1" mean
 ###find service status in windows
 sc query servicesname
 net start
+###config service
+sc config servicename obj= username password= xxxxxx
+sc config servicename obj= LocalSysem
 ###wait
 ping 127.0.0.1 -n 1 > null
 ###delete folder
