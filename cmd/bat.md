@@ -1,10 +1,7 @@
 ## for demo
 for /f %%i in (text.txt) do ....
-
 for /f %%i in ('command') do .....
-
 for /f "delims="%%i in ('command') do ..... "delims=" means do not spilit string
-
 for /f "delims=, tokens=1"%%i in ('command') do ..... "delims=， tokens=1" means spilit string with "," and chose the first column
 ## find service status in windows
 sc query servicesname
