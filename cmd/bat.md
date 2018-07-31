@@ -1,4 +1,3 @@
-
 ## for demo
 for /f %%i in (text.txt) do ....  
 for /f %%i in ('command') do .....  
@@ -10,9 +9,9 @@ net start
 ## config service
 sc config servicename obj= username password= xxxxxx  
 sc config servicename obj= LocalSysem  
-要指定此服务使用“本地系统”帐户，请单击“本地系统帐户”。
-要指定此服务使用“本地服务”帐户，请单击“此帐户”，然后键入 NT AUTHORITY\LocalService。
-要指定此服务使用“网络服务”帐户，请单击“此帐户”，然后键入 NT AUTHORITY\NetworkService。
+要指定此服务使用“本地系统”帐户，请单击“本地系统帐户”。  
+要指定此服务使用“本地服务”帐户，请单击“此帐户”，然后键入 NT AUTHORITY\LocalService。  
+要指定此服务使用“网络服务”帐户，请单击“此帐户”，然后键入 NT AUTHORITY\NetworkService。  
 ## wait
 ping 127.0.0.1 -n 1 > null
 ## delete folder
