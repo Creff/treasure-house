@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+	<!-- <bean id="user1" class="user1"> <property name="AA" ref="BB"></property> 
+		</bean> -->
+	<bean id="user" class="com.pfs.ip.datamodeling.springSimulaiton.user">
+		<property name="userId" value="1"></property>
+		<property name="userName" value="aaa"></property>
+	</bean>
+
+	<bean id="addUser" class="com.pfs.ip.datamodeling.springSimulaiton.addUserImpl">
+		<property name="user" ref="user"></property>
+	</bean>
+
+	<bean id="myAdvice" class="com.pfs.ip.datamodeling.springSimulaiton.myAdvice">
+	</bean>
+	<!-- only support aop configuration below currently -->
+	<aopconfig>
+		<aopaspect ref="myAdvice">
+			<aopbefore method="log"
+				pointcut="execute(void com.pfs.ip.datamodeling.springSimulaiton.addUserImpl.addUser())" />
+		</aopaspect>
+	</aopconfig>
+
+</beans>
