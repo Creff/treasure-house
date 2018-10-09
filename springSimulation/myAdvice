@@ -1,0 +1,8 @@
+package com.pfs.ip.datamodeling.springSimulaiton;
+
+public class myAdvice {
+	public void log(){
+		System.out.println("log info .......");
+	}
+
+}
