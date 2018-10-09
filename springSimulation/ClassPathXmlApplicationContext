@@ -1,0 +1,116 @@
+package com.pfs.ip.datamodeling.springSimulaiton;
+
+import java.awt.Window.Type;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.security.acl.LastOwnerException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.rmi.ssl.SslRMIServerSocketFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+public class ClassPathXmlApplicationContext {
+	private Map<String, Object> beans = new HashMap<String, Object>();
+
+	public Object getBean(String id) {
+		return beans.get(id);
+	}
+
+	public ClassPathXmlApplicationContext() throws Exception {
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+			DocumentBuilder builder = dbf.newDocumentBuilder();  
+			InputStream in = xmlPraserA.class.getClassLoader().getResourceAsStream("spring.xml");  
+			Document doc = builder.parse(in);  
+			XPathFactory factory = XPathFactory.newInstance();  
+			XPath xpath = factory.newXPath();  
+			// choose all class bean attribute
+			XPathExpression expr = xpath.compile("//bean");  
+			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);  
+			for (int i = 0; i < nodes.getLength(); i++) { 
+				Object o = Class.forName(nodes.item(i).getAttributes().getNamedItem("class").getNodeValue()).newInstance();
+				String id = nodes.item(i).getAttributes().getNamedItem("id").getNodeValue();
+				beans.put(id, o);
+				XPathExpression exprChild = xpath.compile("//bean[@id='"+nodes.item(i).getAttributes().getNamedItem("id").getNodeValue()+"']/*");  
+				NodeList childNodes = (NodeList) exprChild.evaluate(doc, XPathConstants.NODESET);
+				for (int j = 0; j < childNodes.getLength(); j++){
+					String name = childNodes.item(j).getAttributes().getNamedItem("name").getNodeValue();
+					Node ref = childNodes.item(j).getAttributes().getNamedItem("ref");
+					Node value = childNodes.item(j).getAttributes().getNamedItem("value");
+					if(ref != null){
+						String mName = "set"+name.substring(0, 1).toUpperCase()+name.substring(1);
+						Object refObject = beans.get(ref.getNodeValue());
+						Method m = o.getClass().getMethod(mName,refObject.getClass());
+						m.invoke(o, refObject);
+					}
+					if(value != null){
+						String mName = "set"+name.substring(0, 1).toUpperCase()+name.substring(1);
+						String type = o.getClass().getDeclaredField(name).getType().getTypeName();
+						Method m;
+						if(type.equals("int")){
+							m = o.getClass().getMethod(mName,int.class);
+							m.invoke(o, Integer.parseInt(value.getNodeValue()));
+						}else if(type.equals("java.lang.String")){
+							m = o.getClass().getMethod(mName,String.class);
+							m.invoke(o, value.getNodeValue());
+						}
+
+					}
+				}
+
+			} 
+
+			//choose all aspect attribute
+			XPathExpression aopExpr = xpath.compile("//aopaspect");  
+			NodeList aopNodes = (NodeList) aopExpr.evaluate(doc, XPathConstants.NODESET);  
+			int FASDFASDF = aopNodes.getLength();
+			for(int k=0; k < aopNodes.getLength();k++){
+				Object aspect = beans.get(aopNodes.item(k).getAttributes().getNamedItem("ref").getNodeValue());
+				XPathExpression aopM = xpath.compile("//aopaspect//aopbefore");  
+				NodeList aopNodesM = (NodeList) aopM.evaluate(doc, XPathConstants.NODESET);
+				String aspectM = aopNodesM.item(0).getAttributes().getNamedItem("method").getNodeValue();
+				String pointcut = aopNodesM.item(0).getAttributes().getNamedItem("pointcut").getNodeValue();
+				String[] pointcutsplit = pointcut.split(" ")[1].split("\\.");
+				int lastLenth = pointcutsplit[pointcutsplit.length-1].length();
+				String targetM = pointcutsplit[pointcutsplit.length-1].substring(0, lastLenth-3);
+				String pointcutTarget = pointcut.split(" ")[1].substring(0, pointcut.split(" ")[1].length()-lastLenth-1);
+				for(String bean : beans.keySet()){
+					if(beans.get(bean).getClass().getName().equals(pointcutTarget)){
+						springInovationHandler springProxy = new springInovationHandler();
+						springProxy.setTarget(beans.get(bean));
+						springProxy.setTargetM(targetM);
+						springProxy.setAspect(aspect);
+						springProxy.setAspectM(aspectM);
+						addUser proxy = (addUser)Proxy.newProxyInstance(beans.get(bean).getClass().getClassLoader(),beans.get(bean).getClass().getInterfaces(), springProxy);
+						beans.replace(bean, proxy);
+					}
+				}
+			}
+		} catch (XPathExpressionException e) {  
+			e.printStackTrace();  
+		} catch (ParserConfigurationException e) {  
+			e.printStackTrace();  
+		} catch (SAXException e) {  
+			e.printStackTrace();  
+		} catch (IOException e) {  
+			e.printStackTrace();  
+		}  
+	}
+}
