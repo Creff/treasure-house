@@ -1,0 +1,41 @@
+package com.pfs.ip.datamodeling.springSimulaiton;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+public class springInovationHandler implements InvocationHandler{
+	private Object target;
+	private Object aspect;
+	private String aspectM;
+	private String targetM;
+
+	public void setTargetM(String targetM) {
+		this.targetM = targetM;
+	}
+
+
+	public void setAspectM(String aspectM) {
+		this.aspectM = aspectM;
+	}
+
+
+	public void setAspect(Object aspect) {
+		this.aspect = aspect;
+	}
+
+
+	public void setTarget(Object target) {
+		this.target = target;
+	}
+
+
+	public Object invoke(Object proxy, Method m, Object[] args) throws Throwable {
+		if(m.getName() == targetM || m.getName() == "*"){
+			Method am = aspect.getClass().getMethod(aspectM);
+			am.invoke(aspectM);
+		}
+		m.invoke(target, args);
+		return null;
+	}
+	
+}
