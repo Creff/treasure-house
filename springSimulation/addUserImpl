@@ -1,0 +1,19 @@
+package com.pfs.ip.datamodeling.springSimulaiton;
+
+public class addUserImpl implements addUser{
+	user user;
+
+	public user getUser() {
+		return user;
+	}
+
+	public void setUser(user user) {
+		this.user = user;
+	}
+
+	public void addUser() {
+		System.out.println(user.userId+":"+user.userName);
+		
+	}
+
+}
