@@ -1,6 +1,0 @@
-###check git status currently
-git status 
-###update all at local 
-git add * 
-###pull newest branch code currently
-git pull
