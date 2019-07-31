@@ -1,0 +1,90 @@
+package com.cpy.tool.compareFiles;
+
+import java.io.File;
+import java.util.HashMap;
+
+/**
+ * Hello world!
+ *
+ */
+public class App 
+{
+	
+	public static HashMap<String,String> _diffFiles = new HashMap<String,String>();
+
+    
+    public static void compareFiles(String sourcePackage, String targetPackage) {
+    	File sourceFile = new File(sourcePackage);
+    	File targetFile = new File(targetPackage);
+    	File sourceFileList[] = sourceFile.listFiles();
+    	File targetFileList[] = targetFile.listFiles();
+    	
+    	HashMap<String,String> sourceFileMap = new HashMap<String, String>();
+    	HashMap<String,String> targetFileMap = new HashMap<String, String>();
+    	
+    	for(File sf : sourceFileList) {
+    		Boolean isDir = sf.isDirectory()?true:false;
+    		if(isDir) {
+    			sourceFileMap.put(sf.getName(),"dir");
+    		}else {
+    			sourceFileMap.put(sf.getName(),"file");
+    		}
+    	}
+    	
+    	for(File tf : targetFileList) {
+    		Boolean isDir = tf.isDirectory()?true:false;
+    		if(isDir) {
+    			targetFileMap.put(tf.getName(),"dir");
+    		}else {
+    			targetFileMap.put(tf.getName(),"file");
+    		}
+    	}
+    	
+    	//compare files of sourcePackage with that of targetPackage
+    	
+    	if(targetFileMap.equals(sourceFileMap)) {
+    		for(String sfkey : sourceFileMap.keySet()) {
+    			if(sourceFileMap.get(sfkey).equals("dir")) {
+    				compareFiles(sourcePackage+"\\"+sfkey,targetPackage+"\\"+sfkey );
+    			}
+    		}
+    	}else {
+    		for(String sfkey : sourceFileMap.keySet()) {
+    			if(sfkey.equals("gf-config.xml")) {
+    				System.out.println( "debug" );
+    			}
+    			if(targetFileMap.containsKey(sfkey)) {
+    				if(targetFileMap.get(sfkey).equals(sourceFileMap.get(sfkey))){
+    					targetFileMap.remove(sfkey);
+    	    			if(sourceFileMap.get(sfkey).equals("dir")) {
+    	    				compareFiles(sourcePackage+"\\"+sfkey,targetPackage+"\\"+sfkey );
+    	    			}
+    				}else {
+    					_diffFiles.put(sourcePackage+"\\"+sfkey+":"+sourceFileMap.get(sfkey),"source");
+    					_diffFiles.put(targetPackage+"\\"+sfkey+":"+targetFileMap.get(sfkey),"target");
+    					targetFileMap.remove(sfkey);
+    				}
+    				
+    				
+    			}else {
+    				_diffFiles.put(sourcePackage+"\\"+sfkey,"source");
+    			}
+    		}
+    		
+    		for(String tfkey : targetFileMap.keySet()) {
+    			_diffFiles.put(targetPackage+"\\"+tfkey,"target");
+    		}
+    	}
+    	
+    	
+    }
+    
+    public static void main( String[] args )
+    
+    {
+    	System.out.println( "Hello World!" );
+    	compareFiles("F:\\eclipse-workspace\\compareFiles\\test\\AppStore_s", "F:\\eclipse-workspace\\compareFiles\\test\\AppStore_t");
+        System.out.println( "Hello World!" );
+    	System.out.println( _diffFiles );
+    }
+}
